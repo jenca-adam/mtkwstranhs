@@ -1,0 +1,190 @@
+<html>
+<head>
+<title>
+Pexeso
+</title>
+
+<script>
+var pexeso=`
+<html>
+<head>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+td#bordered{
+  border:3px solid black;
+  }
+</style>
+<script>
+var selectedBool=false;
+var selectedAngle=0;
+var selectX=0;
+var selectY=0;
+var gameOver=false;
+var ry=0
+var rx=0
+var Field=[[0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0]]
+function ri(h) {
+  return Math.floor(Math.random() * Math.floor(h));
+
+}
+for(i=1;i<17;i++){
+  while(true){
+  var x=ri(8);
+  var y=ri(4);
+  if (Field[y][x]==0){
+    break
+  }}
+  Field[y][x]=i;
+
+  
+}
+
+for(i=1;i<17;i++){
+  while(true){
+  var x=ri(8);
+  var y=ri(4);
+  if (Field[y][x]==0){
+    break
+  }}
+  Field[y][x]=i;}
+
+var columns=document.getElementsByTagName('td');
+console.log(columns.lenght);
+function setImg(blah,obj){
+  console.log(blah);
+  var ry=Math.floor(blah/8);
+  var rx=blah%8;
+  console.log([ry,rx]);
+  m=Field[ry];
+  console.log(m[rx]);
+  obj.style.width=219;
+  obj.style.height=192;
+  obj.setAttribute('onclick',"click("+ry+","+rx+")");
+  obj.innerHTML='<img src="../pics/uhol' + m[rx].toString() + '.png" width=219 height=192 {{'style= "disp:`lay:none" onclick="click('+rx+','+ry+')"/>';
+
+
+}
+var columns=document.getElementsByTagName('td');
+console.log(columns);
+  
+
+function superCheckFld(y){
+  if(y>0){
+    gameOver=false;
+    }
+}
+function checkFld(y){
+  y.forEach(superCheckFld);
+  }
+function checkGameOver(){
+  gameOver=true;
+  Field.forEach(checkFld);
+  return gameOver;
+}
+
+function click(xc,yc){
+  console.log([xc,yc]);
+  if (selectedBool==true){
+      if(Field[yc][xc]==selectedAngle){
+        Field[yc][xc]=0;
+        document.getElementsByTagName('img')[yc*8+xc].style.display='none';
+        document.getElementsByTagName('img')[selectX+selectY*8].style.display='none';
+        document.getElementsByTagName('td')[yc*8+xc].setAttribute("id","");
+        document.getElementsByTagName('td')[selectX+selectY*8].setAttribute("id","")
+
+        if(checkGameOver()){
+          document.getElementById('deskripcia').style.display='block';
+        }
+      else{
+        document.getElementsByTagName('img')[yc+xc].style.display='none';
+        document.getElementsByTagName('img')[selectX+selectY].style.display='none';
+
+      }
+      selectedBool=false;
+        
+      }
+  }
+  else{
+    selectedAngle=Field[yc][xc];
+    document.getElementsByTagName('img')[yc+xc].style.display='block';
+    selectedBool=true;
+    console.log(selectedAngle);
+  }
+}
+
+\<\/script>
+</head>
+<body>
+<button onclick="location.reload()">Spat</button>
+<div class="w3-container">
+<table>
+<tr>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+
+</tr>
+<tr>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+</tr>
+<tr>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ </tr>
+<tr>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+ <td id="bordered" class="w3-panel w3-border-black"></td>
+
+</tr>
+
+</table>
+</div>
+<script>
+var columns=document.getElementsByTagName('td');
+console.log(columns.lenght);
+  
+for(i=0;i<32;i++){
+  console.log(i);
+  console.log(columns[i]);
+  setImg(i,columns[i]);
+}
+
+<\/script>
+</body>
+</html>`
+function begingame(){
+  document.write(pexeso)
+}
+</script>
+</head>
+<body>
+<button onclick="begingame()">Zacni hru</button>
+</body>
+</html>

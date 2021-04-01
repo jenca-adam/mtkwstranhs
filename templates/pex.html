@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>
+Pexeso
+</title>
+
+<script>
+var pexeso=`
+<html>
+<head>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+td#bordered{
+  border:3px solid black;
+  }
+td{
+  width:291px;
+  height:192px;
+  }
+</style>
+
+ </head>
+<body>
+<p><b>Pocet tahov:{{th}}</b></p>
+<button onclick="location.replace('/pexeso')">Spat</button>
+{%if not go%}
+<div class="w3-container">
+<table>
+{%for i in enumerate(field)%}
+<tr>
+{%for a in enumerate(i[1])%}
+<td id={{"" if a[1].number==0 else "bordered" }} style="width:291px;height:192px" onclick="location.replace('http://localhost:5000/pexeso/click/{{i[0]}}/{{a[0]}}')">
+<img src="{{"/pics/uhol"+repr(a[1].number)+".png"}}" style="{{'display:none' if  (a[1].number == 0) else 'display:block'}};width:291px;height:192px" width=291 height=192>
+</td>
+{%endfor%}
+</tr>
+{%endfor%}
+</table>
+</div>
+{%else%}
+<h1>Vyhral si!</h1>
+{%endif%}
+<div class="w3-container">
+<p>Posledna karta</p>
+
+<img src="/pics/uhol{{lastclicked}}.png" alt="Zatial si na nic neklikol"></img>
+
+</div>
+<script>
+
+<\/script>
+</body>
+</html>`
+function begingame(){
+  document.write(pexeso)
+}
+{%if  not begin%}
+begingame();
+{%endif%}
+</script>
+</head>
+<body>
+{%if begin%}
+<button onclick="begingame()">Zacni hru</button>
+<a href="/static/templata.pdf">Stiahni karticky</a>
+{%endif%}
+</body>
+</html>
