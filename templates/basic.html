@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Moja stránka o prvočíslach</title>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="icon" type="image/ico"href="{{url_for('static',filename='favicon.ico')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script>
+function nacitaj(){
+  var form = document.getElementById("formular")
+  var koliecko =  document.getElementById("koliesko")
+  koliecko.innerHTML='<b class="w3-xlarge">Čakajte prosím! Vaša požiadavka sa spracúva.&nbsp;&nbsp;&nbsp;</b><i class="fa fa-refresh w3-jumbo w3-spin"></i>'
+  form.submit()
+  }
+</script>
+</head>
+<body>
+<div class="w3-container">
+<form class="w3-panel"action="/zisti/" method="POST" id="formular">
+
+<h1 class="w3-xxlarge w3-green">Veci pomocou Eratosthenovho sita:</h1>
+<p><label for="cislo">Zadajte číslo:</label><input class="w3-input"name="cislo" required></input></p>
+<p><label for="courobit">Čo s ním mám urobiť?</label><select class="w3-select" name="courobit" required><option class="w3-option"value="prve">Prvých n prvočísel</option>
+                                                                 <option class="w3-option" value="vsetky">Všetky prvočísla < n</option>
+                                                                 <option class="w3-option"value="jetoto">Je toto cislo prvočíslo?</option>
+                                                                 </select></p>
+<div class="w3-panel">
+<input type="submit" class="w3-button w3-yellow w3-text-red w3-hover-red "value="OK" onclick="nacitaj()" ></input></div>
+</form>
+</div>
+<div id="koliesko"></div>
+<div class="w3-panel">
+<h1 class="w3-xxlarge w3-blue">Euklidov dôkaz nekonečnosti prvočísel</h1>
+<a class="w3-text-red w3-hover-red" href="{{url_for('static',filename='euclides.pdf')}}">Tu</a></div></div>
+

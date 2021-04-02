@@ -17,11 +17,22 @@ td{
   width:291px;
   height:192px;
   }
+body{
+  zoom:70%;
+}
 </style>
-
+{%if otoc%}
+<script>
+function rdrct(){
+  location.replace('http://localhost:5000/pexeso/cancel/{{bcy}}/{{bcx}}/{{clcky}}/{{clckx}}')
+}
+setTimeout(rdrct,1000)
+<\/script>
+{%endif%}
  </head>
 <body>
-<p><b>Pocet tahov:{{th}}</b></p>
+<p class="w3-xlarge"><b>Pocet tahov:{{th}}</b></p>
+<p class="w3-xlarge"><b>Rekord je {{hi}}</b></p>
 <button onclick="location.replace('/pexeso')">Spat</button>
 {%if not go%}
 <div class="w3-container">
@@ -29,8 +40,16 @@ td{
 {%for i in enumerate(field)%}
 <tr>
 {%for a in enumerate(i[1])%}
-<td id={{"" if a[1].number==0 else "bordered" }} style="width:291px;height:192px" onclick="location.replace('http://localhost:5000/pexeso/click/{{i[0]}}/{{a[0]}}')">
-<img src="{{"/pics/uhol"+repr(a[1].number)+".png"}}" style="{{'display:none' if  (a[1].number == 0) else 'display:block'}};width:291px;height:192px" width=291 height=192>
+<td class="w3-container {{"w3-teal" if a[1].number>0 else"w3-white"}}"  id={{"" if a[1].number==0 else "bordered" }} style="width:291px;height:192px" onclick="location.replace('http://localhost:5000/pexeso/click/{{i[0]}}/{{a[0]}}')">
+{%if a[1].showed%}
+<img src="/pics/uhol{{a[1].number}}.png" style="{{'display:none' if  (a[1].number == 0) else 'display:block'}};width:291px;height:192px" width=291 height=192/>
+{%else%}
+{%if a[1].number>0%}
+<br>
+<p class="w3-teal w3-jumbo"><b>PEXESO</b></p>
+<br>
+{%endif%}
+{%endif%}
 </td>
 {%endfor%}
 </tr>
@@ -38,10 +57,10 @@ td{
 </table>
 </div>
 {%else%}
-<h1>Vyhral si!</h1>
+<h1 class="w3-jumbo w3-display-middle">Vyhral si!</h1>
 {%endif%}
 <div class="w3-container">
-<p>Posledna karta</p>
+<p class="w3-xlarge">Posledna karta</p>
 
 <img src="/pics/uhol{{lastclicked}}.png" alt="Zatial si na nic neklikol"></img>
 

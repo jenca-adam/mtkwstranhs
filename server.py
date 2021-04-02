@@ -4,6 +4,7 @@ from flask import Flask, redirect, render_template, abort, request,url_for
 import os
 import json
 import random
+import erathosten
 from json.decoder import JSONDecodeError
 class Obrazok:
     def __init__(self,name):
@@ -20,6 +21,7 @@ class Obrazok:
         self.showed= not self.showed
 os.system('python s.py &')
 app=Flask(__name__)
+rekord=0
 s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 @app.context_processor
 def inject_enumerate():
@@ -27,6 +29,39 @@ def inject_enumerate():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/primes/')
+def eratho():
+    return render_template('basic.html')
+@app.route('/zisti/',methods=['POST'])
+def zisti():
+    if request.method=='POST':
+        form=request.form
+        num=form['cislo']
+        try:
+            num=int(num)
+        except ValueError:
+            return render_template('zisti.html',chyba='Toto nie je cislo')
+        courobit=form['courobit']
+        if courobit=='prve':
+            return  render_template('zisti.html',title="Prvých {num} prvočísel".format(num=num), vysledok=sformatuj(erathosten.primes(int(num)),num))
+        elif courobit =='vsetky':
+            return  render_template('zisti.html',title="Všetky prvočísla < {num}".format(num=num), vysledok=sformatuj(erathosten.primesrange(int(num)),num))
+  
+        else:
+            return  render_template('zisti.html',title="Je čislo {num} prvočíslo?".format(num=num), vysledok=sformatuj(erathosten.isprime(int(num)),num))
+def sformatuj(vec,cislo):
+    if isinstance(vec,bool):
+        if vec:
+            return 'Ano, číslo {cislo} je prvočíslo.'.format(cislo=cislo)
+        else:
+            return 'Nie, číslo {cislo} nie je prvočíslo.'.format(cislo=cislo)
+    elif isinstance(vec,list):
+        return' '.join([str(i) for i in vec])
+    else:
+        return 'Niekde je chIba'
+
 @app.route('/nethack/',methods=['GET','POST'])
 def nethack():
     if request.method=='POST':
@@ -85,13 +120,15 @@ def generfield():
 
 @app.route('/pexeso/<path:clicked>')
 def pex(clicked):
-    global field,clickx,clicky,clickedbool,lastclicked,pocet,gover
+    global field,clickx,clicky,clickedbool,lastclicked,pocet,gover,rekord,otoc,bcly,bclx
     print(clicked)
     begin=False
     lid=False
     if clicked=="begin/":
         lastclicked=0
         pocet=0
+        bcly=-1
+        bclx=-1
         field=generfield()
         clickx=-1
         clicky=-1
@@ -99,6 +136,7 @@ def pex(clicked):
         print(field)
         begin=True
         gover=False
+        otoc=False
     elif clicked.startswith('click/'):
         if 'field' not in globals():
             abort(400)
@@ -113,21 +151,34 @@ def pex(clicked):
             abort(400)
         print (clickedbool)
         if( m[0],m[1])==(clicky,clickx) and clickedbool:
-            return render_template('pex.html',field=field,begin=begin,lid=lid,clck=clickedbool,lastclicked=lastclicked)
+            return render_template('pex.html',field=field,begin=begin,lid=lid,clck=clickedbool,lastclicked=lastclicked,th=pocet,go=gover,hi=rekord,otoc=otoc,clcky=clicky,clckx=clickx,bcy=bcly,bcx=bcxy)
         
         field[m[0]][m[1]].flip()
         lastclicked=field[m[0]][m[1]]
-                    
+        
         if clickedbool:
+            bcly=m[0]
+            bclx=m[1]
             clickedbool=False
             if field[m[0]][m[1]]==field[clicky][clickx]:
                 field[clicky][clickx]=field[m[0]][m[1]]=Obrazok(0)
-            else:
-                field[clicky][clickx].flip()
-                field[m[0]][m[1]].flip()
+            else:otoc=True
         else:
             clickedbool=True
             clicky,clickx=m
+    elif clicked.startswith('cancel/'):
+        otoc=False
+        c=clicked.split('/')
+        if len(c)!=5:
+            abort(400)
+        m=c[1:]
+        try:
+            m=[int(i) for i in m]
+        except ValueError:
+            abort(400)
+        field[m[0]][m[1]].flip()
+        field[m[2]][m[3]].flip()
+
     
     else:
         abort(400)
@@ -140,7 +191,11 @@ def pex(clicked):
                 break
         if not gover:
             break
-    return render_template('pex.html',field=field,begin=begin,lid=lid,clck=clickedbool,lastclicked=lastclicked,th=pocet,go=gover)
+    if gover:
+        if pocet>rekord:
+            rekord=pocet
+
+    return render_template('pex.html',field=field,begin=begin,lid=lid,clck=clickedbool,lastclicked=lastclicked,th=pocet,go=gover,hi=rekord,otoc=otoc,clcky=clicky,clckx=clickx,bcy=bcly,bcx=bclx)
 @app.route('/pexeso/')
 def pxsindx():
     return redirect('/pexeso/begin/')
