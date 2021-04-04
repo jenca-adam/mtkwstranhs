@@ -6,6 +6,8 @@ import json
 import random
 import erathosten
 from json.decoder import JSONDecodeError
+from hashlib import sha256
+import pickle
 class Obrazok:
     def __init__(self,name):
         self.number=name
@@ -19,6 +21,43 @@ class Obrazok:
 
     def flip(self):
         self.showed= not self.showed
+
+class Game:
+    def __init__(self):
+        self.field=self.generfield()
+        self.begin=True
+        self.clck=False
+        self.lastclicked=0
+        self.th=0
+        self.go=False
+        self.otoc=False
+        self.clcky=-1
+        self.clckx=-1
+        self.bcy=-1
+        self.bcx=-1
+    def __getattr__(self,a):
+        if a=='game':
+            return self
+        raise AttributeError
+    def generfield(self):
+        mapa=list(range(1,17))*2
+        mapa=[Obrazok(i) for i in mapa]
+        random.shuffle(mapa)
+       
+        feld=[]
+        fel=[]
+        for i in range(32):
+            fel.append(mapa[i])
+            if  i%8==7:
+                feld.append(fel)
+                fel=[]
+        
+        return feld
+
+class DictClass:
+    def __init__(self,d):
+        self.__dict__.update(d)
+games={}
 os.system('python s.py &')
 app=Flask(__name__)
 rekord=0
@@ -103,44 +142,36 @@ def get(alias):
     if alias not in urls:
         abort(404)
     return redirect(urls[alias])
-def generfield():
-    mapa=list(range(1,17))*2
-    mapa=[Obrazok(i) for i in mapa]
-    random.shuffle(mapa)
-   
-    feld=[]
-    fel=[]
-    for i in range(32):
-        fel.append(mapa[i])
-        if  i%8==7:
-            feld.append(fel)
-            fel=[]
-    
-    return feld
-
 @app.route('/pexeso/<path:clicked>')
 def pex(clicked):
-    global field,clickx,clicky,clickedbool,lastclicked,pocet,gover,rekord,otoc,bcly,bclx
+    global rekord
+    games=pickle.load(open('games.pickle','rb'))
     print(clicked)
     begin=False
     lid=False
+    try:
+        game=DictClass(games[request.remote_addr])
+    except KeyError:pass
     if clicked=="begin/":
-        lastclicked=0
-        pocet=0
-        bcly=-1
-        bclx=-1
-        field=generfield()
-        clickx=-1
-        clicky=-1
-        clickedbool=False
-        print(field)
-        begin=True
-        gover=False
-        otoc=False
+        games[request.remote_addr]=Game().__dict__
+        pickle.dump(games,open('games.pickle','wb'))
+        games=pickle.load(open('games.pickle','rb'))
+        print(clicked)
+        begin=False
+        lid=False
+        print(games)
+
+
+    
+
+
     elif clicked.startswith('click/'):
-        if 'field' not in globals():
-            abort(400)
-        pocet+=1
+        print(game.otoc) 
+       
+        game=DictClass(games[request.remote_addr])
+        game.begin=False
+        game.th+=1
+        
         c=clicked.split('/')
         if len(c)!=3:
             abort(400)
@@ -149,25 +180,28 @@ def pex(clicked):
             m=[int(i) for i in m]
         except ValueError:
             abort(400)
+        clickedbool=game.clck
         print (clickedbool)
-        if( m[0],m[1])==(clicky,clickx) and clickedbool:
-            return render_template('pex.html',field=field,begin=begin,lid=lid,clck=clickedbool,lastclicked=lastclicked,th=pocet,go=gover,hi=rekord,otoc=otoc,clcky=clicky,clckx=clickx,bcy=bcly,bcx=bcxy)
+        if( m[0],m[1])==(game.clcky,game.clckx) and game.clck:
+            return render_template('pex.html',field=game.field,begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.gover,hi=game.rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx)
         
-        field[m[0]][m[1]].flip()
-        lastclicked=field[m[0]][m[1]]
+        game.field[m[0]][m[1]].flip()
+        game.lastclicked=game.field[m[0]][m[1]]
         
-        if clickedbool:
-            bcly=m[0]
-            bclx=m[1]
-            clickedbool=False
-            if field[m[0]][m[1]]==field[clicky][clickx]:
-                field[clicky][clickx]=field[m[0]][m[1]]=Obrazok(0)
-            else:otoc=True
+        if game.clck:
+            game.bcy=m[0]
+            game.bcx=m[1]
+            game.clck=False
+            if game.field[m[0]][m[1]]==game.field[game.clicky][game.clickx]:
+                game.field[game.clicky][game.clickx]=game.field[m[0]][m[1]]=Obrazok(0)
+            else:
+                game.otoc=True
+                print(game.otoc)
         else:
-            clickedbool=True
+            game.clck=True
             clicky,clickx=m
     elif clicked.startswith('cancel/'):
-        otoc=False
+        game.otoc=False
         c=clicked.split('/')
         if len(c)!=5:
             abort(400)
@@ -182,20 +216,20 @@ def pex(clicked):
     
     else:
         abort(400)
-    gover=True
-    for i in field:
+    game.go=True
+    for i in game.field:
         for a in i:
             if a.number!=0:
-                gover=False
-                print(gover)
+                game.go=False
+                
                 break
-        if not gover:
+        if not game.go:
             break
-    if gover:
-        if pocet>rekord:
-            rekord=pocet
-
-    return render_template('pex.html',field=field,begin=begin,lid=lid,clck=clickedbool,lastclicked=lastclicked,th=pocet,go=gover,hi=rekord,otoc=otoc,clcky=clicky,clckx=clickx,bcy=bcly,bcx=bclx)
+    if game.go:
+        if game.th<rekord:
+            rekord=game.th
+    pickle.dump(games,open('games.pickle','wb'))
+    return render_template('pex.html',field=game.field,begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clcky,clckx=game.clckx,bcy=game.bcy,bcx=game.bcx)
 @app.route('/pexeso/')
 def pxsindx():
     return redirect('/pexeso/begin/')
@@ -207,9 +241,9 @@ def pic(picname):
 @app.route('/favicon.ico')
 def favicon():
     return redirect(url_for('static', filename='favicon.ico'))
-
-try:
-    app.run(debug=True,port=5000)        
-except:
-    os.system('killall python')
-    raise SystemError('ssss')
+if __name__=='__main__':
+    try:
+        app.run(debug=True,port=5000)        
+    except:
+        os.system('killall python')
+        raise SystemError('ssss')
