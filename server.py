@@ -31,8 +31,8 @@ class Game:
         self.th=0
         self.go=False
         self.otoc=False
-        self.clcky=-1
-        self.clckx=-1
+        self.clicky=-1
+        self.clickx=-1
         self.bcy=-1
         self.bcx=-1
     def __getattr__(self,a):
@@ -144,7 +144,7 @@ def get(alias):
     return redirect(urls[alias])
 @app.route('/pexeso/<path:clicked>')
 def pex(clicked):
-    global rekord
+    global rekord,game
     games=pickle.load(open('games.pickle','rb'))
     print(clicked)
     begin=False
@@ -182,9 +182,9 @@ def pex(clicked):
             abort(400)
         clickedbool=game.clck
         print (clickedbool)
-        if( m[0],m[1])==(game.clcky,game.clckx) and game.clck:
-            return render_template('pex.html',field=game.field,begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.gover,hi=game.rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx)
-        
+        if( m[0],m[1])==(game.clicky,game.clickx) and game.clck:
+            return render_template('pex.html',field=game.field,begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx)
+                    
         game.field[m[0]][m[1]].flip()
         game.lastclicked=game.field[m[0]][m[1]]
         
@@ -199,7 +199,7 @@ def pex(clicked):
                 print(game.otoc)
         else:
             game.clck=True
-            clicky,clickx=m
+            game.clicky,game.clickx=m
     elif clicked.startswith('cancel/'):
         game.otoc=False
         c=clicked.split('/')
@@ -210,8 +210,8 @@ def pex(clicked):
             m=[int(i) for i in m]
         except ValueError:
             abort(400)
-        field[m[0]][m[1]].flip()
-        field[m[2]][m[3]].flip()
+        game.field[m[0]][m[1]].flip()
+        game.field[m[2]][m[3]].flip()
 
     
     else:
@@ -228,8 +228,9 @@ def pex(clicked):
     if game.go:
         if game.th<rekord:
             rekord=game.th
+    games[request.remote_addr].update(game.__dict__)
     pickle.dump(games,open('games.pickle','wb'))
-    return render_template('pex.html',field=game.field,begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clcky,clckx=game.clckx,bcy=game.bcy,bcx=game.bcx)
+    return render_template('pex.html',field=game.field,begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx)
 @app.route('/pexeso/')
 def pxsindx():
     return redirect('/pexeso/begin/')
