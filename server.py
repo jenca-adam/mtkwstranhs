@@ -59,7 +59,6 @@ class DictClass:
     def __init__(self,d):
         self.__dict__.update(d)
 games={}
-os.system('python s.py &')
 app=Flask(__name__)
 rekord=0
 s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
