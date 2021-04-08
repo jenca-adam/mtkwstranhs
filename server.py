@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import socket
 import time
 from flask import Flask, redirect, render_template, abort, request,url_for 
@@ -154,6 +155,7 @@ def pex(clicked):
     except KeyError:pass
     if clicked=="begin/":
         games[request.remote_addr]=Game().__dict__
+        game=DictClass(games[request.remote_addr])
         pickle.dump(games,open('games.pickle','wb'))
         games=pickle.load(open('games.pickle','rb'))
         print(clicked)
@@ -166,6 +168,8 @@ def pex(clicked):
 
 
     elif clicked.startswith('click/'):
+        game=DictClass(games[request.remote_addr])
+
         print(game.otoc) 
        
         game=DictClass(games[request.remote_addr])
@@ -201,6 +205,8 @@ def pex(clicked):
             game.clck=True
             game.clicky,game.clickx=m
     elif clicked.startswith('cancel/'):
+        game=DictClass(games[request.remote_addr])
+
         game.otoc=False
         c=clicked.split('/')
         if len(c)!=5:
@@ -230,6 +236,8 @@ def pex(clicked):
             rekord=game.th
     games[request.remote_addr].update(game.__dict__)
     pickle.dump(games,open('games.pickle','wb'))
+    game=DictClass(games[request.remote_addr])
+
     return render_template('pex.html',field=game.field,begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx)
 @app.route('/pexeso/')
 def pxsindx():
