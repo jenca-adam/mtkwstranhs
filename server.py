@@ -102,17 +102,6 @@ def sformatuj(vec,cislo):
     else:
         return 'Niekde je chIba'
 
-@app.route('/nethack/',methods=['GET','POST'])
-def nethack():
-    if request.method=='POST':
-        f=request.form
-        u=f['name']
-        s.sendto(u.encode('utf-8'),('127.0.0.1',1062))
-        b,add=s.recvfrom(1024)
-        p=ord(b.decode('utf-8'))
-        time.sleep(0.5)
-        return redirect('http://localhost:{}'.format(p))
-    return render_template('sind.html')
 try:
     urls=json.load(open('urls.json','r'))
 except JSONDecodeError:
