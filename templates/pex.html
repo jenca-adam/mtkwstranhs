@@ -32,18 +32,18 @@ setTimeout(rdrct,1000)
  </head>
 <body>
 <p class="w3-xlarge"><b>Pocet tahov:{{th}}</b></p>
-<button onclick="location.replace('/pexeso')">Spat</button>
+<button onclick="location.replace('/pexeso')" class="w3-button w3-red w3-hover blue">Spat</button>
 {%if not go%}
 <div class="w3-container">
 <table>
 {%for i in enumerate(field)%}
 <tr>
 {%for a in enumerate(i[1])%}
-<td class="w3-container {{"w3-teal" if a[1].number>0 else"w3-white"}}"  id={{"" if a[1].number==0 else "bordered" }} style="width:291px;height:192px" onclick="location.replace('http://localhost:5000/pexeso/click/{{i[0]}}/{{a[0]}}')">
-{%if a[1].showed%}
-<img src="/pics/uhol{{a[1].number}}.png" style="{{'display:none' if  (a[1].number == 0) else 'display:block'}};width:291px;height:192px" width=291 height=192/>
+<td class="w3-container {{"w3-teal" if a[1]>0 else"w3-white"}}"  id={{"" if a[1]==0 else "bordered" }} style="width:291px;height:192px" {% if (not otoc) and a[1]>0%}onclick="location.replace('http://localhost:5000/pexeso/click/{{i[0]}}/{{a[0]}}{%endif%}')">
+{%if a[1]>17%}
+<img src="/pics/uhol{{a[1]-16}}.png" style="{{'display:none' if  (a[1]== 0) else 'display:block'}};width:291px;height:192px" width=291 height=192/>
 {%else%}
-{%if a[1].number>0%}
+{%if a[1]>0%}
 <br>
 <p class="w3-teal w3-jumbo"><b>PEXESO</b></p>
 <br>
@@ -57,6 +57,8 @@ setTimeout(rdrct,1000)
 </div>
 {%else%}
 <h1 class="w3-jumbo w3-display-middle">Vyhral si!</h1>
+<button onclick="location.replace('/pexesi')" class="w3-button w3-red w3-hover blue">ZNOVA</button>
+
 {%endif%}
 <script>
 
