@@ -105,6 +105,9 @@ def pex_cncl(game,y,x,by,bx):
 @app.route('/pexeso/')
 def pxsindx():
     resp=make_response(redirect('/pexeso/begin'))
+    if not request.cookies.get('id'):
+        resp.set_cookie('id',
+            _random_cookie())
     return resp
 @app.route('/pics/<string:picname>')
 def pic(picname):

@@ -40,7 +40,7 @@ setTimeout(rdrct,1000)
 <tr>
 {%for a in enumerate(i[1])%}
 <td class="w3-container {{"w3-teal" if a[1]>0 else"w3-white"}}"  id={{"" if a[1]==0 else "bordered" }} style="width:291px;height:192px" {% if (not otoc) and a[1]>0%}onclick="location.replace('http://localhost:5000/pexeso/click/{{i[0]}}/{{a[0]}}{%endif%}')">
-{%if a[1]>17%}
+{%if a[1]>=17%}
 <img src="/pics/uhol{{a[1]-16}}.png" style="{{'display:none' if  (a[1]== 0) else 'display:block'}};width:291px;height:192px" width=291 height=192/>
 {%else%}
 {%if a[1]>0%}
@@ -56,9 +56,10 @@ setTimeout(rdrct,1000)
 </table>
 </div>
 {%else%}
-<h1 class="w3-jumbo w3-display-middle">Vyhral si!</h1>
-<button onclick="location.replace('/pexesi')" class="w3-button w3-red w3-hover blue">ZNOVA</button>
-
+<div class="w3-display-middle">
+<h1 class="w3-jumbo">Vyhral si!</h1>
+<button onclick="location.replace('/pexeso')" class="w3-button w3-red w3-hover blue">ZNOVA</button>
+</div>
 {%endif%}
 <script>
 
