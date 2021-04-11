@@ -29,6 +29,11 @@ function rdrct(){
 setTimeout(rdrct,1000)
 <\/script>
 {%endif%}
+<script>
+function closePanel(){
+  document.getElementById("cookienotif").style.display="none"
+  }
+<\/script>
  </head>
 <body>
 <p class="w3-xlarge"><b>Pocet tahov:{{th}}</b></p>
@@ -61,6 +66,9 @@ setTimeout(rdrct,1000)
 <button onclick="location.replace('/pexeso')" class="w3-button w3-red w3-hover blue">ZNOVA</button>
 </div>
 {%endif%}
+{%if urlbg%}
+<div class="w3-panel w3-xxlarge w3-display-bottom w3-red" id="cookienotif">Tato stranka pouziva subory cookies na ukladanie hier.&nbsp;&nbsp;&nbsp;<div><button class="w3-button w3-yellow w3-hover-teal" onclick="closePanel();">Suhlasim</button></div></div>
+{%endif%}
 <script>
 
 <\/script>
@@ -75,6 +83,7 @@ begingame();
 </script>
 </head>
 <body>
+&nbsp;
 {%if begin%}
 <button onclick="begingame()">Zacni hru</button>
 <a href="/static/templata.pdf">Stiahni karticky</a>
