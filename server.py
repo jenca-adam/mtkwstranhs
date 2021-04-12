@@ -2,7 +2,7 @@
 import socket
 import time
 from flask import Flask, redirect, render_template, abort, request,url_for,make_response 
-import os
+import sys
 import json
 import random
 import erathosten
@@ -28,9 +28,15 @@ def _random_cookie():
 
 def get_cookie(function):
     def decorate(*args,**kwargs):
-        i=int(request.cookies.get('id'))
+        try:
+            i=int(request.cookies.get('id'))
+        except TypeError:
+            i=None
+        if i is None:
+            a=function(None,*args,**kwargs)
         if not sg.get(i):
             g=sg.Game(cookie=i,begin=True,clck=False,lastclicked=-1,field=json.dumps(generfield()),th=0,go=False,otoc=False,clicky=-1,clickx=-1,bcy=-1,bcx=-1)
+
             sg.session.add(g)
             sg.session.commit()
         a=function(sg.get(i),*args,**kwargs)
@@ -49,12 +55,20 @@ def index():
 @app.route('/pexeso/begin/')
 @get_cookie
 def pex_bgn(game):
+    if game is None:
+        respo=redirect('/pexeso/begin/')
+        print('client without cookie',file=sys.stderr)
+        respo.set_cookie('id',
+            _random_cookie())
+        return respo
     return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=True)
 
 
 @app.route('/pexeso/click/<int:y>/<int:x>')
 @get_cookie
 def pex_clck(game,y,x):
+        
+
         print(game.clck) 
         game.begin=False
         game.th+=1
@@ -98,6 +112,7 @@ def pex_clck(game,y,x):
 @app.route('/pexeso/cancel/<int:y>/<int:x>/<int:by>/<int:bx>')
 @get_cookie
 def pex_cncl(game,y,x,by,bx):
+   
     game.otoc=False
     game.field=json.dumps(flip(json.loads(game.field),y,x))
     game.field=json.dumps(flip(json.loads(game.field),by,bx))
