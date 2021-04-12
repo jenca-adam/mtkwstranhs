@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import json
 import random
+import setup
 def generfield():
         mapa=list(range(1,17))*2
         random.shuffle(mapa)
@@ -18,7 +19,7 @@ def generfield():
         
         return feld
 
-engine=create_engine('sqlite:///sg.db',connect_args={"check_same_thread": False})
+engine=create_engine(setup.DB_URL,connect_args={"check_same_thread": False})
 Base = declarative_base()
 class Game(Base):
     __tablename__='games'

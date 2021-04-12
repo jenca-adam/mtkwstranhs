@@ -10,7 +10,7 @@ from json.decoder import JSONDecodeError
 from hashlib import sha256
 import pickle
 import sg
-from uu import generfield
+from uuadam import generfield
 
 games={}
 app=Flask(__name__)
@@ -119,7 +119,7 @@ def pex_cncl(game,y,x,by,bx):
     return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False)
 @app.route('/pexeso/')
 def pxsindx():
-    resp=make_response(redirect('/pexeso/begin'))
+    resp=make_response(redirect('/pexeso/begin/'))
     if not request.cookies.get('id'):
         resp.set_cookie('id',
             _random_cookie())
