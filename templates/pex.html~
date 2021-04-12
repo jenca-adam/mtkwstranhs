@@ -37,6 +37,7 @@ function closePanel(){
  </head>
 <body>
 <p class="w3-xlarge"><b>Pocet tahov:{{th}}</b></p>
+<button onclick="location.replace('/pexeso')" class="w3-button w3-red w3-hover blue">Spat</button>
 {%if not go%}
 <div class="w3-container">
 <table>
