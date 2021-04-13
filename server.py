@@ -61,18 +61,9 @@ def inject_enumerate():
 @app.route('/')
 def index():
     return render_template('index.html')
-
-@app.route('/pexeso/restart/')
-def pex_restart():
-    resp=make_response(redirect('/pexeso/begin/'))
-    resp.set_cookie('id',_random_cookie())
-    return resp
 @app.route('/pexeso/begin/')
 @get_cookie
 def pex_bgn(game):
-    if request.cookies.get('id') is None:
-       
-        return redirect('/pexeso/restart/')
     return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=True)
 
 
@@ -129,13 +120,7 @@ def pex_cncl(game,y,x,by,bx):
     game.field=json.dumps(flip(json.loads(game.field),y,x))
     game.field=json.dumps(flip(json.loads(game.field),by,bx))
     return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False)
-@app.route('/pexeso/')
-def pxsindx():
-    resp=make_response(redirect('/pexeso/begin/'))
-    if not request.cookies.get('id'):
-        resp.set_cookie('id',
-            _random_cookie())
-    return resp
+
 @app.route('/pics/<string:picname>')
 def pic(picname):
    return open('pics/'+picname,'rb').read()
