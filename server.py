@@ -11,7 +11,7 @@ from hashlib import sha256
 import pickle
 import sg
 from uuadam import generfield
-
+from functools import wraps
 games={}
 app=Flask(__name__)
 rekord=0
@@ -25,25 +25,35 @@ def flip(lst,x,y):
     return lst
 def _random_cookie():
     return str(random.randrange(1829823,289289282)).encode('utf-8')
-
+def _debug(f,**kwargs):
+    print(f,file=sys.stderr,**kwargs)
 def get_cookie(function):
+    @wraps(function)
     def decorate(*args,**kwargs):
+        _debug('starting decorate')
         try:
             i=int(request.cookies.get('id'))
+            _debug('cookie:OK')
         except TypeError:
+            _debug('Without cookie')
             i=None
-        if i is None:
-            a=function(None,*args,**kwargs)
         if not sg.get(i):
+            _debug('Randomizing cookie')
+            i=int(_random_cookie())
+            _debug('Db Entry')
             g=sg.Game(cookie=i,begin=True,clck=False,lastclicked=-1,field=json.dumps(generfield()),th=0,go=False,otoc=False,clicky=-1,clickx=-1,bcy=-1,bcx=-1)
 
             sg.session.add(g)
+            _debug('Commit')
             sg.session.commit()
-        a=function(sg.get(i),*args,**kwargs)
-         
+        _debug('Calling function')
+        a=make_response(function(sg.get(i),*args,**kwargs))
+        _debug('Making response')
         sg.session.commit()
+        _debug('Cleaning up')
+        a.set_cookie('id',str(i))
+        _debug('Setting cookie')
         return a
-    decorate.__name__=function.__name__
     return decorate
 @app.context_processor
 def inject_enumerate():
