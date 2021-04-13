@@ -52,15 +52,17 @@ def inject_enumerate():
 def index():
     return render_template('index.html')
 
+@app.route('/pexeso/restart/')
+def pex_restart():
+    resp=make_response(redirect('/pexeso/begin/'))
+    resp.set_cookie('id',_random_cookie())
+    return resp
 @app.route('/pexeso/begin/')
 @get_cookie
 def pex_bgn(game):
-    if game is None:
-        respo=redirect('/pexeso/begin/')
-        print('client without cookie',file=sys.stderr)
-        respo.set_cookie('id',
-            _random_cookie())
-        return respo
+    if request.cookies.get('id') is None:
+       
+        return redirect('/pexeso/restart/')
     return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=True)
 
 
