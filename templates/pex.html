@@ -81,7 +81,7 @@ while(window.innerHeight > window.innerWidth){
 {%for i in enumerate(field)%}
 <tr>
 {%for a in enumerate(i[1])%}
-<td class="w3-container {{"w3-teal" if a[1]>0 else"w3-white"}}"  id={{"" if a[1]==0 else "bordered" }} style="width:291px;height:192px" {% if (not otoc) and a[1]>0%}onclick="window.open('/pexeso/check/');location.replace('/pexeso/click/{{i[0]}}/{{a[0]}}{%endif%}')">
+<td class="w3-container {{"w3-teal" if a[1]>0 else"w3-white"}}"  id={{"" if a[1]==0 else "bordered" }} style="width:291px;height:192px" {% if (not otoc) and a[1]>0%}onclick="location.replace('/pexeso/click/{{i[0]}}/{{a[0]}}{%endif%}')">
 {%if a[1]>=17%}
 <img src="/pics/uhol{{a[1]-16}}.png" style="{{'display:none' if  (a[1]== 0) else 'display:block'}};width:291px;height:192px" width=291 height=192/>
 {%else%}
@@ -103,7 +103,6 @@ while(window.innerHeight > window.innerWidth){
 <a href="/pexeso/begin/" class="w3-button w3-red w3-hover blue">ZNOVA</a>
 </div>
 {%endif%}
-<p class="w3-xxlarge">Celkove kliky:{{pocether}}</p>
 {%if urlbg%}
 <div class="w3-container w3-xxlarge w3-display-bottom w3-red" style="bottom:-200;" id="cookienotif">Tato stranka pouziva subory cookies na ukladanie hier.&nbsp;&nbsp;&nbsp;<div><button class="w3-button w3-yellow w3-hover-teal" 
 onclick="closePanel();">Suhlasim</button></div></div>
