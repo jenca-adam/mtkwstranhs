@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 import socket
 import time
-from flask import Flask, redirect, render_template, abort, request,url_for,make_response 
+from flask import Flask, redirect, render_template, abort, request,url_for,make_response
+from flask_mobility import Mobility
 import sys
 import json
 import random
@@ -14,8 +15,8 @@ from uuadam import generfield
 from functools import wraps
 games={}
 app=Flask(__name__)
-rekord=0
-
+pocether=int(open('default.txt').read())
+Mobility(app)
 def flip(lst,x,y):
     number=lst[x][y]
     if number<=16:
@@ -34,10 +35,10 @@ def get_cookie(function):
         try:
             i=int(request.cookies.get('id'))
             _debug('cookie:OK')
-        except TypeError:
+        except (TypeError,ValueError):
             _debug('Without cookie')
             i=None
-        if not sg.get(i):
+        if ((not sg.get(i)) or i is None):
             _debug('Randomizing cookie')
             i=int(_random_cookie())
             _debug('Db Entry')
@@ -64,13 +65,15 @@ def index():
 @app.route('/pexeso/begin/')
 @get_cookie
 def pex_bgn(game):
-    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=True)
+    global pocether
+    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=True,pocether=pocether)
 
 
 @app.route('/pexeso/click/<int:y>/<int:x>')
 @get_cookie
 def pex_clck(game,y,x):
-        
+        global pocether
+
 
         print(game.clck) 
         game.begin=False
@@ -79,7 +82,7 @@ def pex_clck(game,y,x):
         clickedbool=game.clck
         
         if(y,x)==(game.clicky,game.clickx) and game.clck:
-            return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False)
+            return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=pocether)
                     
         
         game.lastclicked=json.loads(game.field)[y][x]
@@ -106,7 +109,7 @@ def pex_clck(game,y,x):
                     break
             if not game.go:break
         
-        resp=make_response(render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False))
+        resp=make_response(render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=pocether))
         if game.go:
             resp.set_cookie('id',_random_cookie())
         return resp
@@ -115,12 +118,17 @@ def pex_clck(game,y,x):
 @app.route('/pexeso/cancel/<int:y>/<int:x>/<int:by>/<int:bx>')
 @get_cookie
 def pex_cncl(game,y,x,by,bx):
-   
+    global pocether
     game.otoc=False
     game.field=json.dumps(flip(json.loads(game.field),y,x))
     game.field=json.dumps(flip(json.loads(game.field),by,bx))
-    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=rekord,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False)
-
+    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=pocether)
+@app.route('/pexeso/check/')
+def chck():
+    global pocether
+    pocether+=1
+    open('default.txt','w').write(str(pocether))
+    return render_template('counter.html')
 @app.route('/pics/<string:picname>')
 def pic(picname):
    return open('pics/'+picname,'rb').read()

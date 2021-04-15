@@ -3,7 +3,17 @@
 <title>
 Pexeso
 </title>
-
+<style>
+body{
+zoom:200%;
+}
+button,a{
+padding:10px;
+border:15px solid black;
+}
+</style>
+<meta name="viewport"/>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script>
 var pexeso=`
 <html>
@@ -17,8 +27,18 @@ td{
   width:291px;
   height:192px;
   }
+table{
+  border-spacing:20px;
+  padding:10px;
+  text-align:center;
+  }
 body{
-  zoom:70%;
+  zoom:{%if not request.MOBILE%}50{%else%}50{%endif%}%;
+}
+#cookienotif{
+  width:75%;
+  text-align:center;
+  padding:15px;
 }
 </style>
 {%if otoc%}
@@ -36,14 +56,24 @@ function closePanel(){
 <\/script>
  </head>
 <body>
-<p class="w3-xlarge"><b>Pocet tahov:{{th}}</b></p>
+<p class={%if request.MOBILE%}"w3-jumbo"{%else%}"w3-xxlarge"{%endif%}><b>Pocet tahov:{{th}}</b></p>
+{%if urlbg%}
+<script>
+  function moveup(){
+    document.getElementById('cookienotif').style.bottom+=1;
+  }
+for(i=0;i<200;i++){
+  setTimeout(moveup,1);
+}
+<\/script>
+{%endif%}
 {%if not go%}
 <div class="w3-container">
 <table>
 {%for i in enumerate(field)%}
 <tr>
 {%for a in enumerate(i[1])%}
-<td class="w3-container {{"w3-teal" if a[1]>0 else"w3-white"}}"  id={{"" if a[1]==0 else "bordered" }} style="width:291px;height:192px" {% if (not otoc) and a[1]>0%}onclick="location.replace('/pexeso/click/{{i[0]}}/{{a[0]}}{%endif%}')">
+<td class="w3-container {{"w3-teal" if a[1]>0 else"w3-white"}}"  id={{"" if a[1]==0 else "bordered" }} style="width:291px;height:192px" {% if (not otoc) and a[1]>0%}onclick="window.open('/pexeso/check/');location.replace('/pexeso/click/{{i[0]}}/{{a[0]}}{%endif%}')">
 {%if a[1]>=17%}
 <img src="/pics/uhol{{a[1]-16}}.png" style="{{'display:none' if  (a[1]== 0) else 'display:block'}};width:291px;height:192px" width=291 height=192/>
 {%else%}
@@ -62,30 +92,39 @@ function closePanel(){
 {%else%}
 <div class="w3-display-middle">
 <h1 class="w3-jumbo">Vyhral si!</h1>
-<button onclick="location.replace('/pexeso')" class="w3-button w3-red w3-hover blue">ZNOVA</button>
+<a href="/pexeso/begin/" class="w3-button w3-red w3-hover blue">ZNOVA</a>
 </div>
 {%endif%}
+<p class="w3-xxlarge">Celkove kliky:{{pocether}}</p>
 {%if urlbg%}
-<div class="w3-panel w3-xxlarge w3-display-bottom w3-red" id="cookienotif">Tato stranka pouziva subory cookies na ukladanie hier.&nbsp;&nbsp;&nbsp;<div><button class="w3-button w3-yellow w3-hover-teal" onclick="closePanel();">Suhlasim</button></div></div>
+<div class="w3-container w3-xxlarge w3-display-bottom w3-red" style="bottom:-200;" id="cookienotif">Tato stranka pouziva subory cookies na ukladanie hier.&nbsp;&nbsp;&nbsp;<div><button class="w3-button w3-yellow w3-hover-teal" 
+onclick="closePanel();">Suhlasim</button></div></div>
 {%endif%}
 <script>
-
 <\/script>
 </body>
 </html>`
 function begingame(){
   document.write(pexeso)
 }
+</script>
+</head>
+<body>
+<script>
+
 {%if  not begin%}
 begingame();
 {%endif%}
 </script>
-</head>
-<body>
 &nbsp;
 {%if begin%}
-<button onclick="begingame()">Zacni hru</button>
-<a href="/static/templata.pdf">Stiahni karticky</a>
+<div class="w3-container w3-display-middle">
+<div class="w3-container">
+<center><button class="w3-button w3-red" onclick="begingame()">Zacni hru</button></center></div><hr>
+<div class="w3-container">
+<center><a href="/static/templata.pdf" class="w3-button w3-yellow">Stiahni karticky</a></center>
+</div>
+</div>
 {%endif%}
 </body>
 </html>
