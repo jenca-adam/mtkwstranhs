@@ -12,12 +12,13 @@ padding:10px;
 border:15px solid black;
 }
 </style>
-<meta name="viewport"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script>
 var pexeso=`
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <style>
 td#bordered{
@@ -64,6 +65,13 @@ function closePanel(){
   }
 for(i=0;i<200;i++){
   setTimeout(moveup,1);
+}
+<\/script>
+{%endif%}
+{%if urlbg%}
+<script>
+while(window.innerHeight > window.innerWidth){
+    alert("Otoc telefon na sirku, inac ti to nepojde");
 }
 <\/script>
 {%endif%}
