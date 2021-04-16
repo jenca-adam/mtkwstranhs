@@ -11,7 +11,7 @@ from json.decoder import JSONDecodeError
 from hashlib import sha256
 import pickle
 import sg
-from uuadam import generfield
+from uuadam import generfield,genmobfield
 from functools import wraps
 games={}
 app=Flask(__name__)
@@ -31,6 +31,12 @@ def get_cookie(function):
     @wraps(function)
     def decorate(*args,**kwargs):
         _debug('starting decorate')
+        _debug('selecting field generator')
+        request.MOBILE=True
+        generator=generfield
+        if request.MOBILE:
+            _debug('Mobile client')
+            generator=genmobfield
         try:
             i=int(request.cookies.get('id'))
             _debug('cookie:OK')
@@ -41,7 +47,7 @@ def get_cookie(function):
             _debug('Randomizing cookie')
             i=int(_random_cookie())
             _debug('Db Entry')
-            g=sg.Game(cookie=i,begin=True,clck=False,lastclicked=-1,field=json.dumps(generfield()),th=0,go=False,otoc=False,clicky=-1,clickx=-1,bcy=-1,bcx=-1)
+            g=sg.Game(cookie=i,begin=True,clck=False,lastclicked=-1,field=json.dumps(generator()),th=0,go=False,otoc=False,clicky=-1,clickx=-1,bcy=-1,bcx=-1)
 
             sg.session.add(g)
             _debug('Commit')
@@ -64,7 +70,7 @@ def index():
 @app.route('/pexeso/begin/')
 @get_cookie
 def pex_bgn(game):
-    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=True,pocether=0)
+    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=True,pocether=0,cancpath=False)
 
 
 @app.route('/pexeso/click/<int:y>/<int:x>')
@@ -79,7 +85,7 @@ def pex_clck(game,y,x):
         clickedbool=game.clck
         
         if(y,x)==(game.clicky,game.clickx) and game.clck:
-            return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=0)
+            return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=0,cancpath=False)
                     
         
         game.lastclicked=json.loads(game.field)[y][x]
@@ -99,14 +105,15 @@ def pex_clck(game,y,x):
             print(game.clck)
             game.clicky,game.clickx=y,x
         game.go=True
-        for y in range(4):
-            for x in range(8):
+        for y in range(6):
+            for x in range(4):
+                print(y,x)
                 if json.loads(game.field)[y][x]>0:
                     game.go=False
                     break
             if not game.go:break
         
-        resp=make_response(render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=0))
+        resp=make_response(render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=0,cancpath=False))
         if game.go:
             resp.set_cookie('id',_random_cookie())
         return resp
@@ -118,7 +125,7 @@ def pex_cncl(game,y,x,by,bx):
     game.otoc=False
     game.field=json.dumps(flip(json.loads(game.field),y,x))
     game.field=json.dumps(flip(json.loads(game.field),by,bx))
-    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=0)
+    return render_template('pex.html',field=json.loads(game.field),begin=game.begin,lid=0,clck=game.clck,lastclicked=game.lastclicked,th=game.th,go=game.go,hi=0,otoc=game.otoc,clcky=game.clicky,clckx=game.clickx,bcy=game.bcy,bcx=game.bcx,urlbg=False,pocether=0,cancpath=True)
 @app.route('/pexeso/check/')
 def chck():
     global pocether

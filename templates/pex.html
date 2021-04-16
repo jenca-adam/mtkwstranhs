@@ -32,14 +32,19 @@ table{
   border-spacing:20px;
   padding:10px;
   text-align:center;
+  margin-left:auto;
+  margin-right:auto;
   }
 body{
-  zoom:{%if not request.MOBILE%}50{%else%}40{%endif%}%;
+  zoom:{%if not request.MOBILE%}57{%else%}40{%endif%}%;
+  text-align:center;
 }
 #cookienotif{
   width:75%;
   text-align:center;
   padding:15px;
+  margin-left:auto;
+  margin-right:auto;
 }
 </style>
 {%if otoc%}
@@ -50,6 +55,19 @@ function rdrct(){
 setTimeout(rdrct,1000)
 <\/script>
 {%endif%}
+{%if not otoc%}
+<script>
+function hideTah(){
+  document.getElementById("tahy").style.display="none";
+  document.getElementById("content").style.zoom="110%"
+}
+{%if not cancpath%}
+setTimeout(hideTah,1000);
+{%else%}
+setTimeout(hideTah,5);
+{%endif%}
+<\/script>
+{%endif%}
 <script>
 function closePanel(){
   document.getElementById("cookienotif").style.display="none"
@@ -57,7 +75,8 @@ function closePanel(){
 <\/script>
  </head>
 <body>
-<p class={%if request.MOBILE%}"w3-jumbo"{%else%}"w3-xxlarge"{%endif%}><b>Pocet tahov:{{th}}</b></p>
+<div id="content">
+<p class={%if request.MOBILE%}"w3-jumbo"{%else%}"w3-xxlarge"{%endif%} id="tahy"><b>Pocet tahov:{{th}}</b></p>
 {%if urlbg%}
 <script>
   function moveup(){
@@ -67,12 +86,14 @@ for(i=0;i<200;i++){
   setTimeout(moveup,1);
 }
 <\/script>
-{%endif%}
+{%endif%}`+`
 
 <script>
-while(window.innerHeight > window.innerWidth){
-    alert("Otoc telefon na sirku, inac ti to nepojde");
+{%if request.MOBILE%}
+if(window.innerHeight < window.innerWidth){
+    alert("Lepsie to ide na vysku");
 }
+{%endif%}
 <\/script>
 {%if not go%}
 <div class="w3-container">
@@ -108,6 +129,7 @@ onclick="closePanel();">Suhlasim</button></div></div>
 {%endif%}
 <script>
 <\/script>
+</div>
 </body>
 </html>`
 function begingame(){
