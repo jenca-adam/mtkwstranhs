@@ -1,0 +1,16 @@
+[Unit]
+Description=Gunicorn -- prvocisla
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/data/www/prvocisla
+ExecStart=/usr/bin/gunicorn3 -b localhost:5000 -w 4 server:app
+KillMode=mixed
+TimeoutStopSec=5
+Restart=always
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
